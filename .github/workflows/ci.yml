@@ -2,9 +2,11 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   test:
@@ -31,15 +33,11 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
- - name: Serve static pages for UI tests
-        run: |
-          source venv/bin/activate
-          python3 -m http.server 8000 &
-
       - name: Run tests & collect coverage
         run: |
           source venv/bin/activate
           export CHROME_BIN=/usr/bin/chromium-browser
+          python3 -m http.server 8000 &
           pytest --cov=pages --cov-report=xml --cov-report=html
 
       - name: Upload HTML report
@@ -47,12 +45,13 @@ jobs:
         with:
           name: html-report
           path: reports/report.html
-      
+
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: htmlcov/index.html
+
   perf:
     name: Performance Tests
     needs: test
@@ -67,18 +66,19 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install dependencies & Locust
+      - name: Install dependencies
         run: |
-          python3 -m pip install --upgrade pip
-          pip install -r requirements.txt locust flask
+          python -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install locust flask
 
-       - name: Serve pages via Flask
+      - name: Serve pages via Flask
         run: |
           source venv/bin/activate
-          pip install flask
           export FLASK_APP=performance/server.py
           flask run --host=0.0.0.0 --port=8000 &
-
 
       - name: Run Locust load test
         run: |

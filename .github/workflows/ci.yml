@@ -48,3 +48,34 @@ jobs:
         with:
           name: coverage-report
           path: htmlcov/index.html
+  perf:
+    name: Performance Tests
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies & Locust
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install locust
+
+      - name: Run HTTP server
+        run: |
+          # Serve static pages for Locust
+          python3 -m http.server 8000 &
+
+      - name: Run Locust load test
+        run: |
+          locust -f performance/locustfile.py \
+            --host http://127.0.0.1:8000 \
+            --headless -u 20 -r 5 --run-time 30s
+

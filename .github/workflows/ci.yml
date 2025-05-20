@@ -38,13 +38,13 @@ jobs:
           pytest --cov=pages --cov-report=xml --cov-report=html
 
       - name: Upload HTML report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: html-report
           path: reports/report.html
       
       - name: Upload coverage report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: htmlcov/index.html

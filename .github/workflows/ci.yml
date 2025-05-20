@@ -85,4 +85,3 @@ jobs:
           locust -f performance/locustfile.py \
             --host http://127.0.0.1:8000 \
             --headless -u 20 -r 5 --run-time 30s
-

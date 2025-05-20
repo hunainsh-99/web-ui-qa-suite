@@ -1,7 +1,7 @@
 from selenium.webdriver.common.by import By
 
 class LoginPage:
-    URL = "file://{base}/pages/login.html"
+    URL = "http://127.0.0.1:8000/pages/login.html"
     USER = (By.ID, "user")
     PASS = (By.ID, "pass")
     SUBMIT = (By.CSS_SELECTOR, "#login-form button")

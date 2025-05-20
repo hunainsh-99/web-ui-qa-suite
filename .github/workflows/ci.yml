@@ -31,11 +31,15 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
+ - name: Serve static pages for UI tests
+        run: |
+          source venv/bin/activate
+          python3 -m http.server 8000 &
+
       - name: Run tests & collect coverage
         run: |
           source venv/bin/activate
           export CHROME_BIN=/usr/bin/chromium-browser
-          python3 -m http.server 8000 &
           pytest --cov=pages --cov-report=xml --cov-report=html
 
       - name: Upload HTML report
@@ -66,13 +70,15 @@ jobs:
       - name: Install dependencies & Locust
         run: |
           python3 -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install locust
+          pip install -r requirements.txt locust flask
 
-      - name: Run HTTP server
+       - name: Serve pages via Flask
         run: |
-          # Serve static pages for Locust
-          python3 -m http.server 8000 &
+          source venv/bin/activate
+          pip install flask
+          export FLASK_APP=performance/server.py
+          flask run --host=0.0.0.0 --port=8000 &
+
 
       - name: Run Locust load test
         run: |

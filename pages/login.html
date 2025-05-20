@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+  <head><meta charset="utf-8"/><title>Login</title></head>
+  <body>
+    <form id="login-form">
+      <label for="user">Username:</label>
+      <input id="user" name="user" type="text"/>
+      <label for="pass">Password:</label>
+      <input id="pass" name="pass" type="password"/>
+      <button type="submit">Submit</button>
+    </form>
+    <div id="message"></div>
+    <script>
+      document.getElementById('login-form').onsubmit = function(e) {
+        e.preventDefault();
+        const u = e.target.user.value, p = e.target.pass.value;
+        const msg = document.getElementById('message');
+        if (!u || !p) {
+          msg.textContent = 'both fields required';
+        } else if (u !== 'admin' || p !== 'secret') {
+          msg.textContent = 'invalid credentials';
+        } else {
+          msg.textContent = 'welcome, admin';
+        }
+      };
+    </script>
+  </body>
+</html>

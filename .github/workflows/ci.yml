@@ -11,7 +11,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -37,6 +36,7 @@ jobs:
         run: |
           source venv/bin/activate
           export CHROME_BIN=/usr/bin/chromium-browser
+          # Serve static pages for UI tests
           python3 -m http.server 8000 &
           pytest --cov=pages --cov-report=xml --cov-report=html
 
@@ -56,7 +56,6 @@ jobs:
     name: Performance Tests
     needs: test
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -66,9 +65,9 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install dependencies
+      - name: Install dependencies & Locust
         run: |
-          python -m venv venv
+          python3 -m venv venv
           source venv/bin/activate
           pip install --upgrade pip
           pip install -r requirements.txt

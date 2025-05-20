@@ -1,3 +1,5 @@
+[![CI](https://github.com/hunainsh-99/web-ui-qa-suite/actions/workflows/ci.yml/badge.svg)](https://github.com/hunainsh-99/web-ui-qa-suite/actions/workflows/ci.yml)
+
 # Web UI QA Suite
 
 ## Setup

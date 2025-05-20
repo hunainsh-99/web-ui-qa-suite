@@ -15,7 +15,7 @@ def driver():
     driver.quit()
 
 @pytest.fixture(scope="session")
-def base(tmp_path_factory):
+def base():
     return os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 def test_homepage_heading(driver, base):

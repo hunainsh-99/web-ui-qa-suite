@@ -1,4 +1,5 @@
-[![CI](https://github.com/hunainsh-99/web-ui-qa-suite/actions/workflows/ci.yml/badge.svg)](https://github.com/hunainsh-99/web-ui-qa-suite/actions/workflows/ci.yml)
+![Coverage](https://img.shields.io/badge/coverage-<PERCENTAGE>%25-brightgreen)
+
 
 # Web UI QA Suite
 

@@ -19,6 +19,11 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Install Chromium and Chromedriver
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+
       - name: Install dependencies
         run: |
           python -m venv venv

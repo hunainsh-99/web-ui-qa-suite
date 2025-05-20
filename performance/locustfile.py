@@ -1,7 +1,7 @@
 from locust import HttpUser, task, between
 
 class WebsiteUser(HttpUser):
-    wait_time = between(1, 3)          # pause between tasks
+    wait_time = between(1, 3)
 
     @task(3)
     def load_homepage(self):

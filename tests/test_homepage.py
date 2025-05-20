@@ -1,4 +1,6 @@
-import os
+import os, sys
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import pytest
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service

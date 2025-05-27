@@ -1,42 +1,62 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
-        with: 
-        python-version: '3.x'
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
       - name: Start static server
-        run: nohup python3 -m http.server 8000 & 
+        run: nohup python3 -m http.server 8000 &
+
       - name: Set BASE_URL
         run: echo "BASE_URL=http://127.0.0.1:8000" >> $GITHUB_ENV
+
       - name: Run UI Tests
         run: pytest --maxfail=1 --disable-warnings -q
+
   perf:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v4
-        with: 
-        python-version: '3.x'
-      - name: Install dependencies
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies & Locust
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt locust
+
       - name: Launch Flask server
         run: |
           export FLASK_APP=performance/server.py
           nohup flask run --host=0.0.0.0 --port=8000 &
-      - name: Run Locust
+
+      - name: Run Locust load test
         run: |
           locust -f performance/locustfile.py \
             --host http://127.0.0.1:8000 \

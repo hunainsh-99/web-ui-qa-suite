@@ -1,91 +1,41 @@
 name: CI
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push, pull_request]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install Chromium and Chromedriver
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with: python-version: '3.x'
       - name: Install dependencies
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
-
-      - name: Run tests & collect coverage
-        env:
-          BASE_URL: http://127.0.0.1:8000
-        run: |
-          source venv/bin/activate
-          export CHROME_BIN=/usr/bin/chromium-browser
-          # Serve static pages for UI tests
-          python3 -m http.server 8000 &
-          pytest --cov=pages --cov-report=xml --cov-report=html
-
-      - name: Upload HTML report
-        uses: actions/upload-artifact@v4
-        with:
-          name: html-report
-          path: reports/report.html
-
-      - name: Upload coverage report
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: htmlcov/index.html
-
+      - name: Start static server
+        run: nohup python3 -m http.server 8000 & 
+      - name: Set BASE_URL
+        run: echo "BASE_URL=http://127.0.0.1:8000" >> $GITHUB_ENV
+      - name: Run UI Tests
+        run: pytest --maxfail=1 --disable-warnings -q
   perf:
-    name: Performance Tests
     needs: test
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      - name: Install dependencies & Locust
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with: python-version: '3.x'
+      - name: Install dependencies
         run: |
-          python3 -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install locust flask
-
-      - name: Serve pages via Flask
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt locust
+      - name: Launch Flask server
         run: |
-          source venv/bin/activate
           export FLASK_APP=performance/server.py
-          flask run --host=0.0.0.0 --port=8000 &
-
-      - name: Run Locust load test
+          nohup flask run --host=0.0.0.0 --port=8000 &
+      - name: Run Locust
         run: |
-          source venv/bin/activate
           locust -f performance/locustfile.py \
             --host http://127.0.0.1:8000 \
             --headless -u 20 -r 5 --run-time 30s
-

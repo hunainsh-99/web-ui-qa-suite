@@ -1,4 +1,5 @@
-from selenium.webdriver.common.by import By
+from selenium.webdriver.common.by 
+import By
 
 class HomepagePage:
     URL = "{base_url}/pages/homepage.html"

@@ -50,6 +50,3 @@ web-ui-qa-suite/
 └── pytest.ini
 ```
 
-## License
-
-MIT

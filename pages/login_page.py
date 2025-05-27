@@ -1,24 +1,24 @@
 from selenium.webdriver.common.by import By
 
 class LoginPage:
-    URL     = "{base}/pages/login.html"
+    URL     = "{base_url}/pages/login.html"
     USER    = (By.ID, "user")
     PASS    = (By.ID, "pass")
     SUBMIT  = (By.CSS_SELECTOR, "#login-form button")
     MESSAGE = (By.ID, "message")
 
-    def __init__(self, driver, base):
+    def __init__(self, driver, base_url):
         self.driver = driver
-        self.base = base
+        self.base_url = base_url
 
     def load(self):
-        self.driver.get(self.URL.format(base=self.base))
+        self.driver.get(self.URL.format(base_url=self.base_url))
 
     def submit(self, username, password):
-        self.driver.find_element(*self.USER).clear()
-        self.driver.find_element(*self.USER).send_keys(username)
-        self.driver.find_element(*self.PASS).clear()
-        self.driver.find_element(*self.PASS).send_keys(password)
+        u = self.driver.find_element(*self.USER)
+        p = self.driver.find_element(*self.PASS)
+        u.clear();  u.send_keys(username)
+        p.clear();  p.send_keys(password)
         self.driver.find_element(*self.SUBMIT).click()
 
     def message_text(self):

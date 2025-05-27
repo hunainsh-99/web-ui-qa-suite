@@ -4,7 +4,6 @@ from jsonschema import validate
 
 BASE = "https://jsonplaceholder.typicode.com"
 
-# simple schema for a “post” object
 POST_SCHEMA = {
     "type": "object",
     "properties": {
@@ -21,7 +20,6 @@ def test_get_posts_list():
     assert resp.status_code == 200
     data = resp.json()
     assert isinstance(data, list) and len(data) > 0
-    # spot-check schema of first item
     validate(instance=data[0], schema=POST_SCHEMA)
 
 def test_get_single_post():
@@ -34,8 +32,7 @@ def test_get_single_post():
 @pytest.mark.parametrize("post_id", [-1, 0, 9999])
 def test_get_invalid_post(post_id):
     resp = requests.get(f"{BASE}/posts/{post_id}")
-    # JSONPlaceholder returns {} with 200 for out-of-range;
-    # simulate a 404 check instead:
+
     assert resp.status_code in (200, 404)
 
 def test_create_post():
@@ -43,7 +40,6 @@ def test_create_post():
     resp = requests.post(f"{BASE}/posts", json=payload)
     assert resp.status_code == 201
     created = resp.json()
-    # server “echoes” back and adds an id
     assert created["userId"] == 10
     assert "id" in created
     validate(instance=created, schema=POST_SCHEMA)

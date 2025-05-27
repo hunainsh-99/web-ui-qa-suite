@@ -1,7 +1,6 @@
 name: CI
 
-on:
-  [push, pull_request]
+on: [push, pull_request]
 
 jobs:
   test:
@@ -16,11 +15,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Start static server
-        run: |
-          nohup python3 -m http.server 8000 &
+        run: nohup python3 -m http.server 8000 &
       - name: Set BASE_URL
         run: echo "BASE_URL=http://127.0.0.1:8000" >> $GITHUB_ENV
       - name: Run UI Tests
+        env:
+          CHROME_BIN: /usr/bin/chromium-browser
         run: pytest --maxfail=1 --disable-warnings -q
 
   perf:
@@ -44,3 +44,4 @@ jobs:
           locust -f performance/locustfile.py \
             --host http://127.0.0.1:8000 \
             --headless -u 20 -r 5 --run-time 30s
+

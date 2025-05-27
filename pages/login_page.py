@@ -2,14 +2,14 @@ from selenium.webdriver.common.by import By
 
 class LoginPage:
     URL     = "{base_url}/pages/login.html"
-    USER    = (By.ID, "user")
-    PASS    = (By.ID, "pass")
-    SUBMIT  = (By.CSS_SELECTOR, "#login-form button")
+    USER    = (By.ID, "username")
+    PASS    = (By.ID, "password")
+    SUBMIT  = (By.ID, "login-button")
     MESSAGE = (By.ID, "message")
 
     def __init__(self, driver, base_url):
         self.driver = driver
-        self.base_url = base_url
+        self.base_url = base_url.rstrip('/')
 
     def load(self):
         self.driver.get(self.URL.format(base_url=self.base_url))

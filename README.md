@@ -5,7 +5,7 @@
 ## Setup
 
 1. Clone the repo  
-   `git clone https://github.com/yourusername/web-ui-qa-suite && cd web-ui-qa-suite`
+   `git clone https://github.com/hunainsh-99/web-ui-qa-suite && cd web-ui-qa-suite`
 
 2. Create a virtual environment  
    `python3 -m venv venv`

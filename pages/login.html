@@ -11,17 +11,18 @@
     <label>Password: <input id="password" type="password" /></label><br/>
     <button id="login-button" type="submit">Login</button>
   </form>
-  <p id="error" style="color:red;"></p>
+  <p id="message" style="color:red;"></p>
   <script>
     function tryLogin() {
       const u = document.getElementById('username').value;
       const p = document.getElementById('password').value;
+      const msg = document.getElementById('message');
       if (!u || !p) {
-        document.getElementById('error').innerText = 'Both fields required';
-      } else if (u === 'demo' && p === 'demopass') {
-        window.location.href = 'homepage.html';
+        msg.innerText = 'both fields required';
+      } else if (u === 'admin' && p === 'secret') {
+        msg.innerText = `welcome, ${u}`;
       } else {
-        document.getElementById('error').innerText = 'Invalid credentials';
+        msg.innerText = 'invalid credentials';
       }
       return false;
     }

@@ -1,10 +1,10 @@
 from selenium.webdriver.common.by import By
 
 class LoginPage:
-    URL = "http://127.0.0.1:8000/pages/login.html"
-    USER = (By.ID, "user")
-    PASS = (By.ID, "pass")
-    SUBMIT = (By.CSS_SELECTOR, "#login-form button")
+    URL     = "{base}/pages/login.html"
+    USER    = (By.ID, "user")
+    PASS    = (By.ID, "pass")
+    SUBMIT  = (By.CSS_SELECTOR, "#login-form button")
     MESSAGE = (By.ID, "message")
 
     def __init__(self, driver, base):

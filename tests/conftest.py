@@ -10,7 +10,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 
-# 1) ensure repo root on PYTHONPATH so "import pages.*" works
+# ensure the project root is on PYTHONPATH so "import pages.*" works
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
@@ -18,11 +18,19 @@ if ROOT not in sys.path:
 @pytest.fixture(scope="session", autouse=True)
 def flask_server():
     """
-    Launch performance/server.py on :8000 for static pages.
+    Launch performance/server.py on port 8000 for static pages,
+    but only if BASE_URL isn’t set (i.e. in CI where you start it manually).
     """
+    if os.getenv("BASE_URL"):
+        # CI has already started the server
+        yield
+        return
+
     cmd = ["python", os.path.join(ROOT, "performance", "server.py")]
-    proc = subprocess.Popen(cmd, cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    # wait for it to bind
+    proc = subprocess.Popen(
+        cmd, cwd=ROOT, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+    )
+    # wait for server to bind to port 8000
     for _ in range(20):
         try:
             sock = socket.create_connection(("127.0.0.1", 8000), timeout=1)
@@ -42,19 +50,20 @@ def flask_server():
 @pytest.fixture(scope="session", name="base")
 def base_url():
     """
-    Base URL for UI tests. 
-    Override by setting BASE_URL, otherwise use our flask_server.
+    Base URL for UI tests; override via BASE_URL env var in CI.
     """
     return os.getenv("BASE_URL", "http://127.0.0.1:8000").rstrip("/")
 
 @pytest.fixture(scope="session")
 def driver():
+    """
+    Selenium Chrome driver, headless with webdriver-manager.
+    """
     options = Options()
     options.add_argument("--headless")
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
 
-    # pick up custom Chrome binary if CI set it
     chrome_bin = os.getenv("CHROME_BIN")
     if chrome_bin:
         options.binary_location = chrome_bin
@@ -62,5 +71,7 @@ def driver():
     service = Service(ChromeDriverManager().install())
     driver = webdriver.Chrome(service=service, options=options)
     driver.set_window_size(1920, 1080)
+
     yield driver
     driver.quit()
+

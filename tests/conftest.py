@@ -64,4 +64,3 @@ def driver():
     driver.set_window_size(1920, 1080)
     yield driver
     driver.quit()
-
